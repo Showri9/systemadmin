@@ -15,15 +15,18 @@ for i in range(2):
         node = request.XenVM("observer")      
 
     node.routable_control_ip = True  # Should be a boolean, not a string
-    node.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU20-64-STD"
+    node.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD"  # Trying a different disk image
     iface = node.addInterface("if" + str(i))
     iface.component_id = "eth" + str(i + 1)  # Ensure unique component IDs
     iface.addAddress(rspec.IPv4Address(prefixForIP + str(i + 1), "255.255.255.0"))
     link.addInterface(iface)
 
+    # Add debugging service to print network configuration for each node
+    node.addService(rspec.Execute(shell="sh", command="ifconfig -a"))
+
     # Uncomment and ensure the script is available if needed
     # if i == 0:
     #     node.addService(rspec.Execute(shell="sh", command="sudo bash /local/repository/setup_apache.sh"))
-    
+
 # Print the RSpec to the enclosing page.
 portal.context.printRequestRSpec()
